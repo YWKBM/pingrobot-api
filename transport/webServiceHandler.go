@@ -23,7 +23,7 @@ func NewWebServiceHandler(webService WebService) *WebServiceHandler {
 	}
 }
 
-func (wh *WebServiceHandler) Create(c *gin.Context) error {
+func (wh *WebServiceHandler) create(c *gin.Context) error {
 	var inp domain.WebSerice
 	if err := c.BindJSON(&inp); err != nil {
 		return err
@@ -38,7 +38,7 @@ func (wh *WebServiceHandler) Create(c *gin.Context) error {
 	return nil
 }
 
-func (wh *WebServiceHandler) GetWebServiceByUserID(c *gin.Context) error {
+func (wh *WebServiceHandler) getWebServiceByUserID(c *gin.Context) error {
 	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
 		return err

@@ -4,27 +4,19 @@ import (
 	"context"
 
 	"pingrobot-api.go/domain"
+	"pingrobot-api.go/repository"
 )
 
-type WebServiceRepository interface {
-	Create(ctx context.Context, webService domain.WebSerice) error
-	GetWebServiceByUserId(ctx context.Context, id int64) (domain.WebSerice, error)
+type WebSericeService struct {
+	repo repository.WebServiceRepository
 }
 
-type WebSerice struct {
-	repo WebServiceRepository
+func NewWebSericeService(repo repository.WebServiceRepository) *WebSericeService {
+	return &WebSericeService{repo: repo}
 }
 
-func NewWebSericeService(repo WebServiceRepository) *WebSerice {
-	return &WebSerice{repo: repo}
-}
-
-func (w *WebSerice) Create(ctx context.Context, webService domain.WebSerice) error {
-	return w.repo.Create(ctx, webService)
-}
-
-func (w *WebSerice) GetWebServiceByUserId(ctx context.Context, id int64) (domain.WebSerice, error) {
-	return w.repo.GetWebServiceByUserId(ctx, id)
+func (w *WebSericeService) GetWebServiceByUserId(ctx context.Context, id int64) ([]domain.WebSerice, error) {
+	return nil, nil
 }
 
 //TODO: Connection to ping-functional with this package

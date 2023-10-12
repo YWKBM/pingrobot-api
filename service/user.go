@@ -2,33 +2,29 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"pingrobot-api.go/domain"
+	"pingrobot-api.go/repository"
 )
 
-type UsersRepository interface {
-	Create(ctx context.Context, user domain.User) error
-	GetUserById(ctx context.Context, id int64) (domain.User, error)
+type UserService struct {
+	repo repository.UsersRepository
 }
 
-type User struct {
-	repo UsersRepository
-}
-
-func NewUserService(repo UsersRepository) *User {
-	return &User{
+func NewUserService(repo repository.UsersRepository) *UserService {
+	return &UserService{
 		repo: repo,
 	}
 }
 
-func (u *User) Create(ctx context.Context, user domain.User) error {
-	user.CreatedAt = time.Now()
-	user.LastVisitAt = time.Now()
-
-	return u.repo.Create(ctx, user)
+func (u *UserService) SingUp(ctx context.Context, input UserSignUpInput) error {
+	return nil
 }
 
-func (u *User) GetUserById(ctx context.Context, id int64) (domain.User, error) {
-	return u.repo.GetUserById(ctx, id)
+func (u *UserService) SignIn(ctx context.Context, input UserSignInInput) error {
+	return nil
+}
+
+func (u *UserService) CreateWebService(ctx context.Context, webService domain.WebSerice) {
+
 }
