@@ -10,19 +10,18 @@ import (
 type UserSignUpInput struct {
 	Name     string
 	Email    string
-	Phone    string
 	Password string
 }
 
-type UserSignInInput struct {
-	Email    string
-	Password string
-}
+//type UserSignInInput struct {
+//	Email    string
+//	Password string
+//}
 
 type Users interface {
 	SingUp(ctx context.Context, input UserSignUpInput) error
-	SignIn(ctx context.Context, input UserSignInInput) error //TODO: User verif
-	CreateWebService(ctx context.Context, webService domain.WebSerice)
+	SignIn(ctx context.Context, id int64) (*domain.User, error) //TODO: User verif, id only for testing - use UserSignInput, returning user only for testing
+	CreateWebService(ctx context.Context, webService domain.WebSerice) error
 }
 
 type WebServices interface {

@@ -9,11 +9,11 @@ import (
 
 type UsersRepository interface {
 	Create(ctx context.Context, user domain.User) error
-	GetUserById(ctx context.Context, id int64) (domain.User, error)
+	GetUserById(ctx context.Context, id int64) (*domain.User, error)
+	CreateWebService(ctx context.Context, webService domain.WebSerice) error
 }
 
 type WebServiceRepository interface {
-	Create(ctx context.Context, webService domain.WebSerice) error
 	GetWebServiceByUserId(ctx context.Context, id int64) ([]domain.WebSerice, error)
 }
 
