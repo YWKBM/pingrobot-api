@@ -16,7 +16,7 @@ func NewWebSericeService(repo repository.WebServiceRepository) *WebSericeService
 }
 
 func (w *WebSericeService) GetWebServiceByUserId(ctx context.Context, id int64) ([]domain.WebSerice, error) {
-	return nil, nil
+	return w.repo.GetWebServiceByUserId(ctx, id)
 }
 
 //TODO: Connection to ping-functional with this package
