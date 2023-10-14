@@ -1,7 +1,6 @@
 package transport
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -11,17 +10,11 @@ import (
 	"pingrobot-api.go/service"
 )
 
-type User interface {
-	SingUp(ctx context.Context, input service.UserSignUpInput) error
-	SignIn(ctx context.Context, id int64) (*domain.User, error) //TODO: User verif, id only for testing - use UserSignInput, returning user only for testing
-	CreateWebService(ctx context.Context, webService domain.WebSerice) error
-}
-
 type UserHandler struct {
-	userService User
+	userService service.UserService
 }
 
-func NewUserHandler(userService User) *UserHandler {
+func newUserHandler(userService service.UserService) *UserHandler {
 	return &UserHandler{userService: userService}
 }
 
@@ -47,7 +40,7 @@ func (uh *UserHandler) userSingUp(c *gin.Context) {
 }
 
 func (uh *UserHandler) userSingIn(c *gin.Context) {
-	id, err := strconv.Atoi(c.Params.ByName("id"))
+	id, _ := strconv.Atoi(c.Params.ByName("id"))
 
 	usr, err := uh.userService.SignIn(c, int64(id))
 	if err != nil {
@@ -64,7 +57,7 @@ func (uh *UserHandler) userSingIn(c *gin.Context) {
 
 // webService should be created by user. Ideas: realization from routig, but there is shoud be a verification, the lower cod is for test functional
 // TODO: watch text above
-func (uh *UserHandler) createWebService(c *gin.Context) {
+func (uh *UserHandler) userCreateWebService(c *gin.Context) {
 	var inp domain.WebSerice
 	if err := c.BindJSON(&inp); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, err)
@@ -76,4 +69,13 @@ func (uh *UserHandler) createWebService(c *gin.Context) {
 	}
 
 	c.JSON(200, nil)
+}
+
+func (uh *UserHandler) initUserRoutes(api *gin.RouterGroup) {
+	users := api.Group("/users")
+	{
+		users.POST("/sign-up", uh.userSingUp)
+		users.GET("/sign-in", uh.userSingIn) //Remember, only test functional
+		users.POST("/add-service", uh.userCreateWebService)
+	}
 }
