@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "pingrobot-api.go/app"
 
 func main() {
-	fmt.Println("Hello world!")
+	app.Run()
 }

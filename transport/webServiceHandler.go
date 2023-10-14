@@ -9,10 +9,10 @@ import (
 )
 
 type WebServiceHandler struct {
-	webServiceService service.WebSericeService
+	webServiceService service.WebServices
 }
 
-func newWebServiceHandler(webService service.WebSericeService) *WebServiceHandler {
+func newWebServiceHandler(webService service.WebServices) *WebServiceHandler {
 	return &WebServiceHandler{
 		webServiceService: webService,
 	}
@@ -35,6 +35,6 @@ func (wh *WebServiceHandler) serviceGetWebServiceByUserID(c *gin.Context) {
 func (wh *WebServiceHandler) initWebServicedRoutes(api *gin.RouterGroup) {
 	webServices := api.Group("/web-service")
 	{
-		webServices.GET("/get-by-uid/{id:[0-9]+}", wh.serviceGetWebServiceByUserID)
+		webServices.GET("/id:}", wh.serviceGetWebServiceByUserID)
 	}
 }

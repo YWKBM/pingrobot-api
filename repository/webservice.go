@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"pingrobot-api.go/domain"
 )
 

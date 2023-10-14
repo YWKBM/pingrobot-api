@@ -10,17 +10,27 @@ type Handler struct {
 	webServiceHandler *WebServiceHandler
 }
 
-func NewHadnler(userService service.UserService, webService service.WebSericeService) *Handler {
+func NewHadnler(userService service.Users, webService service.WebServices) *Handler {
 	return &Handler{
 		userHadnler:       newUserHandler(userService),
 		webServiceHandler: newWebServiceHandler(webService),
 	}
 }
 
-func (h *Handler) Init(api *gin.RouterGroup) {
-	v1 := api.Group("/v1")
+func (h *Handler) Init() {
+	router := gin.Default()
+
+	router.Use(
+		gin.Recovery(),
+	)
+
+	h.initApi(router)
+}
+
+func (h *Handler) initApi(router *gin.Engine) {
+	api := router.Group("/api")
 	{
-		h.userHadnler.initUserRoutes(v1)
-		h.webServiceHandler.initWebServicedRoutes(v1)
+		h.userHadnler.initUserRoutes(api)
+		h.webServiceHandler.initWebServicedRoutes(api)
 	}
 }

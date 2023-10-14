@@ -2,6 +2,7 @@ package domain
 
 import (
 	"time"
+
 	"github.com/jinzhu/gorm"
 )
 
