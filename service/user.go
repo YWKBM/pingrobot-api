@@ -24,7 +24,7 @@ func (u *UserService) SingUp(ctx context.Context, input UserSignUpInput) error {
 		Password: input.Password,
 	}
 
-	err := u.repo.Create(ctx, user)
+	err := u.repo.Create(ctx, &user)
 
 	if err != nil {
 		return err
@@ -33,11 +33,14 @@ func (u *UserService) SingUp(ctx context.Context, input UserSignUpInput) error {
 	return nil
 }
 
-func (u *UserService) SignIn(ctx context.Context, id int64) (*domain.User, error) {
-	user, err := u.repo.GetUserById(ctx, id)
+func (u *UserService) SignIn(ctx context.Context, input UserSignInInput) (*domain.User, error) {
+	email := input.Email
+	password := input.Password
+	user, err := u.repo.GetUser(ctx, email, password)
 	if err != nil {
 		return nil, err
 	}
+
 	return user, nil
 }
 

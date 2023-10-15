@@ -8,8 +8,8 @@ import (
 )
 
 type UsersRepository interface {
-	Create(ctx context.Context, user domain.User) error
-	GetUserById(ctx context.Context, id int64) (*domain.User, error)
+	Create(ctx context.Context, user *domain.User) error
+	GetUser(ctx context.Context, email string, password string) (*domain.User, error)
 	CreateWebService(ctx context.Context, webService domain.WebSerice) error
 }
 

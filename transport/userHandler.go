@@ -1,9 +1,8 @@
 package transport
 
 import (
-	"encoding/json"
+	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"pingrobot-api.go/domain"
@@ -21,7 +20,8 @@ func newUserHandler(userService service.Users) *UserHandler {
 func (uh *UserHandler) userSingUp(c *gin.Context) {
 	var inp service.UserSignUpInput
 	if err := c.BindJSON(&inp); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		fmt.Print(err)
 
 		return
 	}
@@ -31,7 +31,8 @@ func (uh *UserHandler) userSingUp(c *gin.Context) {
 		Email:    inp.Email,
 		Password: inp.Password,
 	}); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		fmt.Print(err)
 
 		return
 	}
@@ -40,19 +41,23 @@ func (uh *UserHandler) userSingUp(c *gin.Context) {
 }
 
 func (uh *UserHandler) userSingIn(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Params.ByName("id"))
+	var inp service.UserSignInInput
+	if err := c.BindJSON(&inp); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		fmt.Print(err)
 
-	usr, err := uh.userService.SignIn(c, int64(id))
+		return
+	}
+
+	usr, err := uh.userService.SignIn(c, service.UserSignInInput{
+		Email:    inp.Email,
+		Password: inp.Password,
+	})
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, err)
 	}
 
-	resp, err := json.Marshal(&usr)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, err)
-	}
-
-	c.JSON(http.StatusFound, resp)
+	c.JSON(http.StatusFound, usr)
 }
 
 // webService should be created by user. Ideas: realization from routig, but there is shoud be a verification, the lower cod is for test functional

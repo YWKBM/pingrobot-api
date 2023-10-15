@@ -8,19 +8,19 @@ import (
 )
 
 type UserSignUpInput struct {
-	Name     string
-	Email    string
-	Password string
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `jsong:"password"`
 }
 
-//type UserSignInInput struct {
-//	Email    string
-//	Password string
-//}
+type UserSignInInput struct {
+	Email    string `json:"email"`
+	Password string `jsong:"password"`
+}
 
 type Users interface {
 	SingUp(ctx context.Context, input UserSignUpInput) error
-	SignIn(ctx context.Context, id int64) (*domain.User, error) //TODO: User verif, id only for testing - use UserSignInput, returning user only for testing
+	SignIn(ctx context.Context, input UserSignInInput) (*domain.User, error) //TODO: User verif, id only for testing - use UserSignInput, returning user only for testing
 	CreateWebService(ctx context.Context, webService domain.WebSerice) error
 }
 

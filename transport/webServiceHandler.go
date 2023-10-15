@@ -35,6 +35,6 @@ func (wh *WebServiceHandler) serviceGetWebServiceByUserID(c *gin.Context) {
 func (wh *WebServiceHandler) initWebServicedRoutes(api *gin.RouterGroup) {
 	webServices := api.Group("/web-service")
 	{
-		webServices.GET("/id:}", wh.serviceGetWebServiceByUserID)
+		webServices.GET("/:id", wh.serviceGetWebServiceByUserID)
 	}
 }
