@@ -14,9 +14,10 @@ func Run() {
 	connectionInfo := pkg.ConnectionInfo{
 		Host:     "localhost",
 		Port:     5432,
-		DBName:   "Pingrobot-apiu",
-		SSLMode:  "None",
-		Password: "123456",
+		DBName:   "pingrobot-api",
+		Username: "postgres",
+		SSLMode:  "disable",
+		Password: "0591",
 	}
 
 	db, err := pkg.NewPostgresConnection(connectionInfo)

@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"pingrobot-api.go/domain"
 )
 
 type ConnectionInfo struct {
@@ -23,12 +24,14 @@ func NewPostgresConnection(info ConnectionInfo) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	sqlDB, err := db.DB()
+	sqlDB, _ := db.DB()
 
 	err = sqlDB.Ping()
 	if err != nil {
 		return nil, err
 	}
+
+	db.AutoMigrate(&domain.User{}, &domain.WebSerice{})
 
 	return db, nil
 }
