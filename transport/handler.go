@@ -33,4 +33,6 @@ func (h *Handler) initApi(router *gin.Engine) {
 		h.userHadnler.initUserRoutes(api)
 		h.webServiceHandler.initWebServicedRoutes(api)
 	}
+
+	router.Run()
 }
