@@ -31,7 +31,7 @@ func NewPostgresConnection(info ConnectionInfo) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	db.AutoMigrate(&domain.User{}, &domain.WebSerice{})
+	db.AutoMigrate(domain.User{}, domain.WebSerice{})
 
 	return db, nil
 }
