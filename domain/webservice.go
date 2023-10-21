@@ -1,12 +1,8 @@
 package domain
 
-import (
-
-)
-
-type WebSerice struct {
+type WebService struct {
 	ID     int   
-	UserId int    
+	UserID int    
 	Name   string 
 	Link   string 
 	Port   int    

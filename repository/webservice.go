@@ -3,24 +3,34 @@ package repository
 import (
 	"context"
 
-	"gorm.io/gorm"
+	"database/sql"
 	"pingrobot-api.go/domain"
 )
 
 type WebSericeRepo struct {
-	db *gorm.DB
+	db *sql.DB
 }
 
-func NewWebSericeRepo(db *gorm.DB) *WebSericeRepo {
+func NewWebSericeRepo(db *sql.DB) *WebSericeRepo {
 	return &WebSericeRepo{db}
 }
 
-func (w *WebSericeRepo) GetWebServiceByUserId(ctx context.Context, userId int64) ([]domain.WebSerice, error) {
-	var webServices []domain.WebSerice
-	err := w.db.Where("user_id = ?", userId).Find(webServices).Error
-	if err != nil {
+func (w *WebSericeRepo) GetAllWebServices(ctx context.Context) ([]domain.WebService, error) {
+	var webServices []domain.WebService
+
+	rows, err := w.db.Query("SELECT * FROM web_services")
+	if err != nil{
 		return nil, err
 	}
 
+	for rows.Next(){
+		var webService domain.WebService
+		err := rows.Scan(&webService.ID, &webService.UserID, &webService.Name, &webService.Link, &webService.Port, &webService.Status)
+		if err != nil{
+			return nil, err
+		}
+		webServices = append(webServices, webService)
+	}
 	return webServices, nil
+
 }

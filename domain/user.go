@@ -11,6 +11,5 @@ type User struct {
 	Password     string
 	RegisteredAt time.Time
 	LastVisitAt  time.Time
-	Webservices  []WebSerice
-	//Verification
+	WebServices []WebService
 }

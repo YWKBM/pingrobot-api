@@ -1,11 +1,10 @@
 package pkg
 
 import (
-	"fmt"
-
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-	"pingrobot-api.go/domain"
+    "database/sql"
+    "fmt"
+  
+    _ "github.com/lib/pq"
 )
 
 type ConnectionInfo struct {
@@ -17,21 +16,20 @@ type ConnectionInfo struct {
 	Password string
 }
 
-func NewPostgresConnection(info ConnectionInfo) (*gorm.DB, error) {
-	db, err := gorm.Open(postgres.Open((fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=%s password=%s",
-		info.Host, info.Port, info.Username, info.DBName, info.SSLMode, info.Password))), &gorm.Config{})
-	if err != nil {
+func NewPostgresConnection(info ConnectionInfo) (*sql.DB, error){
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+	"password=%s dbname=%s sslmode=%s", info.Host, info.Port, info.Username, info.Password, info.DBName, info.SSLMode)
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil{
 		return nil, err
 	}
 
-	sqlDB, _ := db.DB()
+	defer db.Close()
 
-	err = sqlDB.Ping()
-	if err != nil {
+	err = db.Ping()
+	if err != nil{
 		return nil, err
 	}
-
-	db.AutoMigrate(domain.User{}, domain.WebSerice{})
 
 	return db, nil
 }

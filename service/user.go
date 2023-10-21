@@ -24,26 +24,15 @@ func (u *UserService) SingUp(ctx context.Context, input UserSignUpInput) error {
 		Password: input.Password,
 	}
 
-	err := u.repo.Create(ctx, &user)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return u.repo.Create(ctx, user)
 }
 
-func (u *UserService) SignIn(ctx context.Context, input UserSignInInput) (*domain.User, error) {
+func (u *UserService) SignIn(ctx context.Context, input UserSignInInput) (domain.User, error) {
 	email := input.Email
 	password := input.Password
-	user, err := u.repo.GetUser(ctx, email, password)
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
+	return u.repo.GetUser(ctx, email, password)
 }
 
-func (u *UserService) CreateWebService(ctx context.Context, webService domain.WebSerice) error {
+func (u *UserService) CreateWebService(ctx context.Context, webService domain.WebService) error {
 	return u.repo.CreateWebService(ctx, webService)
 }

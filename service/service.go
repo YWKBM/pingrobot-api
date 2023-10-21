@@ -20,12 +20,12 @@ type UserSignInInput struct {
 
 type Users interface {
 	SingUp(ctx context.Context, input UserSignUpInput) error
-	SignIn(ctx context.Context, input UserSignInInput) (*domain.User, error) //TODO: User verif, id only for testing - use UserSignInput, returning user only for testing
-	CreateWebService(ctx context.Context, webService domain.WebSerice) error
+	SignIn(ctx context.Context, input UserSignInInput) (domain.User, error) //TODO: User verif, id only for testing - use UserSignInput, returning user only for testing
+	CreateWebService(ctx context.Context, webService domain.WebService) error
 }
 
 type WebServices interface {
-	GetWebServiceByUserId(ctx context.Context, id int64) ([]domain.WebSerice, error)
+	GetWebServiceByUserId(ctx context.Context) ([]domain.WebService, error)
 }
 
 type Services struct {
