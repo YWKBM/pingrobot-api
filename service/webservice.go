@@ -15,7 +15,7 @@ func NewWebSericeService(repo repository.WebServiceRepository) *WebSericeService
 	return &WebSericeService{repo: repo}
 }
 
-func (w *WebSericeService) GetWebServiceByUserId(ctx context.Context) ([]domain.WebService, error) {
+func (w *WebSericeService) GetAllWebServices(ctx context.Context) ([]domain.WebService, error) {
 	return w.repo.GetAllWebServices(ctx)
 }
 

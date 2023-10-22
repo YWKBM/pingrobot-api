@@ -2,8 +2,6 @@ package transport
 
 import (
 	"net/http"
-	"strconv"
-
 	"github.com/gin-gonic/gin"
 	"pingrobot-api.go/service"
 )
@@ -18,15 +16,11 @@ func newWebServiceHandler(webService service.WebServices) *WebServiceHandler {
 	}
 }
 
-func (wh *WebServiceHandler) serviceGetWebServiceByUserID(c *gin.Context) {
-	id, err := strconv.Atoi(c.Params.ByName("id"))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, err)
-	}
+func (wh *WebServiceHandler) serviceGetAllWebServices(c *gin.Context) {
+	resp, err := wh.webServiceService.GetAllWebServices(c)
 
-	resp, err := wh.webServiceService.GetWebServiceByUserId(c, int64(id))
-	if err != nil {
-		c.AbortWithStatusJSON(404, err)
+	if err != nil{
+		c.AbortWithStatusJSON(http.StatusNotFound, err)
 	}
 
 	c.JSON(200, resp)
@@ -35,6 +29,6 @@ func (wh *WebServiceHandler) serviceGetWebServiceByUserID(c *gin.Context) {
 func (wh *WebServiceHandler) initWebServicedRoutes(api *gin.RouterGroup) {
 	webServices := api.Group("/web-service")
 	{
-		webServices.GET("/:id", wh.serviceGetWebServiceByUserID)
+		webServices.GET("/get-all", wh.serviceGetAllWebServices)
 	}
 }

@@ -3,6 +3,7 @@ package transport
 import (
 	"fmt"
 	"net/http"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"pingrobot-api.go/domain"
@@ -25,7 +26,7 @@ func (uh *UserHandler) userSingUp(c *gin.Context) {
 
 		return
 	}
-
+ 
 	if err := uh.userService.SingUp(c, service.UserSignUpInput{
 		Name:     inp.Name,
 		Email:    inp.Email,
@@ -63,7 +64,7 @@ func (uh *UserHandler) userSingIn(c *gin.Context) {
 // webService should be created by user. Ideas: realization from routig, but there is shoud be a verification, the lower cod is for test functional
 // TODO: watch text above
 func (uh *UserHandler) userCreateWebService(c *gin.Context) {
-	var inp domain.WebSerice
+	var inp domain.WebService
 	if err := c.BindJSON(&inp); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, err)
 	}
@@ -71,6 +72,7 @@ func (uh *UserHandler) userCreateWebService(c *gin.Context) {
 	err := uh.userService.CreateWebService(c, inp)
 	if err != nil {
 		c.AbortWithStatusJSON(400, err)
+		log.Println(err)
 	}
 
 	c.JSON(200, nil)

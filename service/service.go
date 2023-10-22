@@ -25,7 +25,7 @@ type Users interface {
 }
 
 type WebServices interface {
-	GetWebServiceByUserId(ctx context.Context) ([]domain.WebService, error)
+	GetAllWebServices(ctx context.Context) ([]domain.WebService, error)
 }
 
 type Services struct {
@@ -39,10 +39,10 @@ type Deps struct {
 
 func NewServices(deps Deps) *Services {
 	userService := NewUserService(deps.Repos.Users)
-	webSericeService := NewWebSericeService(deps.Repos.WebServices)
+	webServiceService := NewWebSericeService(deps.Repos.WebServices)
 
 	return &Services{
 		Users:      userService,
-		WebSerices: webSericeService,
+		WebSerices: webServiceService,
 	}
 }
