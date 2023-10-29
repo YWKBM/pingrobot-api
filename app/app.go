@@ -33,7 +33,7 @@ func Run() {
 
 	services := service.NewServices(deps)
 
-	handler := transport.NewHadnler(services.Users, services.WebSerices)
+	handler := transport.NewHadnler(services.Users, services.WebServices)
 
 	handler.Init()
 

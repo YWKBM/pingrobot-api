@@ -6,12 +6,14 @@ import (
 )
 
 type Handler struct {
+	auth              *AuthHandler
 	userHadnler       *UserHandler
 	webServiceHandler *WebServiceHandler
 }
 
-func NewHadnler(userService service.Users, webService service.WebServices) *Handler {
+func NewHadnler(userService service.Users, webService service.WebServices, authService service.AuthService) *Handler {
 	return &Handler{
+		auth:              newAuthHadnler(authService),
 		userHadnler:       newUserHandler(userService),
 		webServiceHandler: newWebServiceHandler(webService),
 	}
