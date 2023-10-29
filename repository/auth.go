@@ -11,6 +11,10 @@ type Auth struct {
 	db *sql.DB
 }
 
+func NewAuthorizationRepo(db *sql.DB) *Auth {
+	return &Auth{db}
+}
+
 func (a *Auth) CreateUser(user domain.User) (int, error) {
 	_, err := a.db.Exec("INSERT INTO users (name, email, password, registered_at, last_visit_at) values ($1, $2, $3, $4, $5)",
 		user.Name, user.Email, user.Password, time.Now(), time.Now())

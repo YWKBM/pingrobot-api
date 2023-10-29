@@ -2,6 +2,7 @@ package transport
 
 import (
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"pingrobot-api.go/service"
 )
@@ -19,7 +20,7 @@ func newWebServiceHandler(webService service.WebServices) *WebServiceHandler {
 func (wh *WebServiceHandler) serviceGetAllWebServices(c *gin.Context) {
 	resp, err := wh.webServiceService.GetAllWebServices(c)
 
-	if err != nil{
+	if err != nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, err)
 	}
 

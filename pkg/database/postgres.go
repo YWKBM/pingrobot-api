@@ -1,10 +1,10 @@
 package pkg
 
 import (
-    "database/sql"
-    "fmt"
-  
-    _ "github.com/lib/pq"
+	"database/sql"
+	"fmt"
+
+	_ "github.com/lib/pq"
 )
 
 type ConnectionInfo struct {
@@ -16,15 +16,15 @@ type ConnectionInfo struct {
 	Password string
 }
 
-func NewPostgresConnection(info ConnectionInfo) (*sql.DB, error){
+func NewPostgresConnection(info ConnectionInfo) (*sql.DB, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-	"password=%s dbname=%s sslmode=%s", info.Host, info.Port, info.Username, info.Password, info.DBName, info.SSLMode)
+		"password=%s dbname=%s sslmode=%s", info.Host, info.Port, info.Username, info.Password, info.DBName, info.SSLMode)
 	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	err = db.Ping()
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 

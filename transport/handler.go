@@ -7,14 +7,12 @@ import (
 
 type Handler struct {
 	auth              *AuthHandler
-	userHadnler       *UserHandler
 	webServiceHandler *WebServiceHandler
 }
 
-func NewHadnler(userService service.Users, webService service.WebServices, authService service.AuthService) *Handler {
+func NewHadnler(webService service.WebServices, authService service.AuthService) *Handler {
 	return &Handler{
 		auth:              newAuthHadnler(authService),
-		userHadnler:       newUserHandler(userService),
 		webServiceHandler: newWebServiceHandler(webService),
 	}
 }
@@ -32,7 +30,6 @@ func (h *Handler) Init() {
 func (h *Handler) initApi(router *gin.Engine) {
 	api := router.Group("/api")
 	{
-		h.userHadnler.initUserRoutes(api)
 		h.webServiceHandler.initWebServicedRoutes(api)
 	}
 

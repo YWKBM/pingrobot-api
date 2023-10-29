@@ -2,29 +2,31 @@ package repository
 
 import (
 	"database/sql"
-	"context"
 
 	"pingrobot-api.go/domain"
 )
 
-type UsersRepository interface {
-	Create(ctx context.Context, user domain.User) error
-	GetUser(ctx context.Context, email string, password string) (domain.User, error)
-	CreateWebService(ctx context.Context, webService domain.WebService) error
+type WebServiceRepository interface {
+	Create(userId int, webService domain.WebService) (int, error)
+	GetAll(userId int) ([]domain.WebService, error)
+	GetById(userId int, webServiceId int) (domain.WebService, error)
+	Delete(userId int, webServiceId int) error
+	Update(userId, webServiceId int, input domain.UpdateWebServiceInput) error
 }
 
-type WebServiceRepository interface {
-	GetAllWebServices(ctx context.Context) ([]domain.WebService, error)
+type Authorization interface {
+	CreateUser(user domain.User) (int, error)
+	GetUser(name, password string) (domain.User, error)
 }
 
 type Repositories struct {
-	Users       UsersRepository
-	WebServices WebServiceRepository
+	WebServices   WebServiceRepository
+	Authorization Authorization
 }
 
 func NewRepositories(db *sql.DB) *Repositories {
 	return &Repositories{
-		Users:       NewUsersRepo(db),
-		WebServices: NewWebSericeRepo(db),
+		WebServices:   NewWebSericeRepo(db),
+		Authorization: NewAuthorizationRepo(db),
 	}
 }

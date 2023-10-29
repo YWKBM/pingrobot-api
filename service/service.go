@@ -1,36 +1,27 @@
 package service
 
 import (
-	"context"
-
 	"pingrobot-api.go/domain"
 	"pingrobot-api.go/repository"
 )
 
-type UserSignUpInput struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `jsong:"password"`
-}
-
-type UserSignInInput struct {
-	Email    string `json:"email"`
-	Password string `jsong:"password"`
-}
-
-type Users interface {
-	SingUp(ctx context.Context, input UserSignUpInput) error
-	SignIn(ctx context.Context, input UserSignInInput) (domain.User, error) //TODO: User verif, id only for testing - use UserSignInput, returning user only for testing
-	CreateWebService(ctx context.Context, webService domain.WebService) error
-}
-
 type WebServices interface {
-	GetAllWebServices(ctx context.Context) ([]domain.WebService, error)
+	Create(usderId int, webSevice domain.WebService) (int, error)
+	GetAll(userId int) ([]domain.WebService, error)
+	GetById(userId int, webServiceId int) (domain.WebService, error)
+	Delete(userId int, webServiceId int) error
+	Update(userId int, webSeviceId int, input UpdateWebServiceInput) error
+}
+
+type Authorization interface {
+	CreateUser(user domain.User) (int, error)
+	GenerateToken(name, password string) (string, error)
+	ParseToken(accessToken string) (int, error)
 }
 
 type Services struct {
-	Users      Users
-	WebSerices WebServices
+	WebSerices    WebServices
+	Authorization Authorization
 }
 
 type Deps struct {
@@ -38,11 +29,17 @@ type Deps struct {
 }
 
 func NewServices(deps Deps) *Services {
-	userService := NewUserService(deps.Repos.Users)
 	webServiceService := NewWebSericeService(deps.Repos.WebServices)
+	authService := NewAuthService(deps.Repos.Authorization)
 
 	return &Services{
-		Users:      userService,
-		WebSerices: webServiceService,
+		WebSerices:    webServiceService,
+		Authorization: authService,
 	}
+}
+
+type UpdateWebServiceInput struct {
+	Name string `json:"name"`
+	Link string `json:"link"`
+	Port int    `json:"port"`
 }
