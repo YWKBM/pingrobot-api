@@ -6,14 +6,14 @@ import (
 )
 
 type Handler struct {
-	auth              *AuthHandler
 	webServiceHandler *WebServiceHandler
+	auth              *AuthHandler
 }
 
-func NewHadnler(webService service.WebServices, authService service.AuthService) *Handler {
+func NewHadnler(webService service.WebServices, authService service.Authorization) *Handler {
 	return &Handler{
-		auth:              newAuthHadnler(authService),
 		webServiceHandler: newWebServiceHandler(webService),
+		auth:              newAuthHadnler(authService),
 	}
 }
 
@@ -28,6 +28,13 @@ func (h *Handler) Init() {
 }
 
 func (h *Handler) initApi(router *gin.Engine) {
+
+	auth := router.Group("/auth")
+	{
+		auth.POST("/sign-up", h.auth.signUp)
+		auth.POST("/sign-in", h.auth.signIn)
+	}
+
 	api := router.Group("/api")
 	{
 		h.webServiceHandler.initWebServicedRoutes(api)

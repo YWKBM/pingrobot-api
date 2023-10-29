@@ -33,10 +33,9 @@ func Run() {
 
 	services := service.NewServices(deps)
 
-	handler := transport.NewHadnler(services.Users, services.WebServices)
+	handler := transport.NewHadnler(services.WebServices, services.Authorization)
 
 	handler.Init()
-
 }
 
 //Host     string

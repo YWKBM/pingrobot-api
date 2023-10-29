@@ -2,8 +2,10 @@ package transport
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"pingrobot-api.go/domain"
 	"pingrobot-api.go/service"
 )
 
@@ -11,25 +13,122 @@ type WebServiceHandler struct {
 	webServiceService service.WebServices
 }
 
-func newWebServiceHandler(webService service.WebServices) *WebServiceHandler {
-	return &WebServiceHandler{
-		webServiceService: webService,
-	}
+func newWebServiceHandler(webServiceService service.WebServices) *WebServiceHandler {
+	return &WebServiceHandler{webServiceService}
 }
 
-func (wh *WebServiceHandler) serviceGetAllWebServices(c *gin.Context) {
-	resp, err := wh.webServiceService.GetAllWebServices(c)
-
+func (wh *WebServiceHandler) createWebService(c *gin.Context) {
+	userId, err := getUserId(c)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, err)
+		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
 	}
 
-	c.JSON(200, resp)
+	var input domain.WebService
+	if err := c.BindJSON(&input); err != nil {
+		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		return
+	}
+
+	id, err := wh.webServiceService.Create(userId, input)
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id": id,
+	})
+}
+
+func (wh *WebServiceHandler) getAllWebServices(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
+		return
+	}
+
+	webServices, err := wh.webServiceService.GetAll(userId)
+	if err != nil {
+		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, webServices)
+}
+
+func (wh *WebServiceHandler) getWebServiceById(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
+		return
+	}
+
+	webServiceId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		return
+	}
+
+	webService, err := wh.webServiceService.GetById(userId, webServiceId)
+	if err != nil {
+		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, webService)
+}
+
+func (wh *WebServiceHandler) updateWebService(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
+		return
+	}
+
+	webServiceId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		return
+	}
+
+	var input domain.UpdateWebServiceInput
+	if err := c.BindJSON(&input); err != nil {
+		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		return
+	}
+
+	if err := wh.webServiceService.Update(userId, webServiceId, input); err != nil {
+		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		return
+	}
+
+	c.JSON(http.StatusOK, "OK")
+}
+
+func (wh *WebServiceHandler) deleteWebService(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
+		return
+	}
+
+	webServiceId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		return
+	}
+
+	if err := wh.webServiceService.Delete(userId, webServiceId); err != nil {
+		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, "OK")
 }
 
 func (wh *WebServiceHandler) initWebServicedRoutes(api *gin.RouterGroup) {
 	webServices := api.Group("/web-service")
 	{
-		webServices.GET("/get-all", wh.serviceGetAllWebServices)
+		webServices.POST("/", wh.createWebService)
+		webServices.GET("/", wh.getAllWebServices)
+		webServices.GET("/:id", wh.getWebServiceById)
+		webServices.PUT("/:id", wh.updateWebService)
+		webServices.DELETE("/:id", wh.deleteWebService)
 	}
 }

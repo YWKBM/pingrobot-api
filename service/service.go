@@ -10,7 +10,7 @@ type WebServices interface {
 	GetAll(userId int) ([]domain.WebService, error)
 	GetById(userId int, webServiceId int) (domain.WebService, error)
 	Delete(userId int, webServiceId int) error
-	Update(userId int, webSeviceId int, input UpdateWebServiceInput) error
+	Update(userId int, webSeviceId int, input domain.UpdateWebServiceInput) error
 }
 
 type Authorization interface {
@@ -20,7 +20,7 @@ type Authorization interface {
 }
 
 type Services struct {
-	WebSerices    WebServices
+	WebServices   WebServices
 	Authorization Authorization
 }
 
@@ -33,13 +33,7 @@ func NewServices(deps Deps) *Services {
 	authService := NewAuthService(deps.Repos.Authorization)
 
 	return &Services{
-		WebSerices:    webServiceService,
+		WebServices:   webServiceService,
 		Authorization: authService,
 	}
-}
-
-type UpdateWebServiceInput struct {
-	Name string `json:"name"`
-	Link string `json:"link"`
-	Port int    `json:"port"`
 }

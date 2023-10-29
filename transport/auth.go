@@ -9,11 +9,11 @@ import (
 )
 
 type AuthHandler struct {
-	authService service.AuthService
+	authService service.Authorization
 }
 
-func newAuthHadnler(authService service.AuthService) *AuthHandler {
-	return &AuthHandler{authService: authService}
+func newAuthHadnler(authService service.Authorization) *AuthHandler {
+	return &AuthHandler{authService}
 }
 
 func (a *AuthHandler) signUp(c *gin.Context) {
@@ -56,5 +56,4 @@ func (a *AuthHandler) signIn(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"token": token,
 	})
-
 }
