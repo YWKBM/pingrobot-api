@@ -24,7 +24,10 @@ func (w *WebSericeRepo) Create(userId int, webService domain.WebService) (int, e
 		return 0, err
 	}
 
-	err = row.Scan(&webServiceId)
+	row.Next()
+	{
+		row.Scan(&webServiceId)
+	}
 
 	return webServiceId, err
 }

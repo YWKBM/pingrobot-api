@@ -35,7 +35,7 @@ func (h *Handler) initApi(router *gin.Engine) {
 		auth.POST("/sign-in", h.auth.signIn)
 	}
 
-	api := router.Group("/api")
+	api := router.Group("/api", h.userIdentity)
 	{
 		h.webServiceHandler.initWebServicedRoutes(api)
 	}

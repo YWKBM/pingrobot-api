@@ -13,10 +13,9 @@ CREATE TYPE service_status as enum('NOT_STATED', 'SUCCESS', 'ERROR');
 CREATE TABLE web_services
 (
     id SERIAL PRIMARY KEY,
-    user_id INT,
+    user_id INT REFERENCES users(id),
     name VARCHAR(255) NOT NULL,
     link VARCHAR(255) NOT NULL,
     port INT NOT NULL,
     status service_status DEFAULT ('NOT_STATED'),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

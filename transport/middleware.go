@@ -10,7 +10,7 @@ import (
 
 const (
 	authHeader = "Authorization"
-	userCtx    = "user_id"
+	userCtx    = "userId"
 )
 
 func (h *Handler) userIdentity(c *gin.Context) {

@@ -1,6 +1,7 @@
 package transport
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,13 +21,16 @@ func (a *AuthHandler) signUp(c *gin.Context) {
 	var input domain.User
 
 	if err := c.BindJSON(&input); err != nil {
+		fmt.Println(err)
 		c.AbortWithStatusJSON(400, http.StatusBadRequest)
 		return
 	}
 
 	id, err := a.authService.CreateUser(input)
 	if err != nil {
+		fmt.Println(err)
 		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
+		return
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
@@ -43,12 +47,14 @@ func (a *AuthHandler) signIn(c *gin.Context) {
 	var input signInInput
 
 	if err := c.BindJSON(&input); err != nil {
+		fmt.Println(err)
 		c.AbortWithStatusJSON(400, http.StatusBadRequest)
 		return
 	}
 
 	token, err := a.authService.GenerateToken(input.Name, input.Password)
 	if err != nil {
+		fmt.Println(err)
 		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
 		return
 	}
