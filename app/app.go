@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 
+	"github.com/spf13/viper"
 	pkg "pingrobot-api.go/pkg/database"
 	"pingrobot-api.go/repository"
 	"pingrobot-api.go/service"
@@ -11,13 +12,17 @@ import (
 
 func Run() {
 
+	viper.AddConfigPath("configs")
+	viper.SetConfigName("config")
+	viper.ReadInConfig()
+
 	connectionInfo := pkg.ConnectionInfo{
-		Host:     "localhost",
-		Port:     5432,
-		DBName:   "pingrobot-api",
-		Username: "postgres",
-		SSLMode:  "disable",
-		Password: "0591",
+		Host:     viper.GetString("db.host"),
+		Port:     viper.GetString("db.port"),
+		DBName:   viper.GetString("db.dbname"),
+		Username: viper.GetString("db.username"),
+		SSLMode:  viper.GetString("db.sslmode"),
+		Password: viper.GetString("db.password"),
 	}
 
 	db, err := pkg.NewPostgresConnection(connectionInfo)

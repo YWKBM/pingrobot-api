@@ -73,7 +73,7 @@ func (wh *WebServiceHandler) getWebServiceById(c *gin.Context) {
 	webServiceId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		fmt.Println(err)
-		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
 
@@ -98,20 +98,20 @@ func (wh *WebServiceHandler) updateWebService(c *gin.Context) {
 	webServiceId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		fmt.Println(err)
-		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
 
 	var input domain.UpdateWebServiceInput
 	if err := c.BindJSON(&input); err != nil {
 		fmt.Println(err)
-		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	if err := wh.webServiceService.Update(userId, webServiceId, input); err != nil {
 		fmt.Println(err)
-		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -122,20 +122,20 @@ func (wh *WebServiceHandler) deleteWebService(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		fmt.Println(err)
-		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	webServiceId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		fmt.Println(err)
-		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
 
 	if err := wh.webServiceService.Delete(userId, webServiceId); err != nil {
 		fmt.Println(err)
-		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 

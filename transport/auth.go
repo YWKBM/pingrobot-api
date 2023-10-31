@@ -22,14 +22,14 @@ func (a *AuthHandler) signUp(c *gin.Context) {
 
 	if err := c.BindJSON(&input); err != nil {
 		fmt.Println(err)
-		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	id, err := a.authService.CreateUser(input)
 	if err != nil {
 		fmt.Println(err)
-		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -48,14 +48,13 @@ func (a *AuthHandler) signIn(c *gin.Context) {
 
 	if err := c.BindJSON(&input); err != nil {
 		fmt.Println(err)
-		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	token, err := a.authService.GenerateToken(input.Name, input.Password)
 	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
+		newErrorResponse(c, http.StatusInternalServerError, "user not found")
 		return
 	}
 

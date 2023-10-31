@@ -37,6 +37,7 @@ func (w UpdateWebServiceInput) Validate() error {
 }
 
 func validURL(link string) bool {
+	//TODO: rewrite for ping-app
 	_, err := url.ParseRequestURI(link)
 	return err == nil
 }
