@@ -19,7 +19,7 @@ const (
 
 type tokenClaims struct {
 	jwt.StandardClaims
-	UserId int `json:"id"` //maybe just id???
+	UserId int `json:"id"`
 }
 
 type AuthService struct {
@@ -31,6 +31,10 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 }
 
 func (a *AuthService) CreateUser(user domain.User) (int, error) {
+	if err := user.Validate(); err != nil {
+		return 0, err
+	}
+
 	user.Password = generatePasswordHash(user.Password)
 	return a.repo.CreateUser(user)
 }
