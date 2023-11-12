@@ -8,12 +8,12 @@ import (
 
 type Worker struct {
 	id       int
-	taskChan chan Task
+	taskChan chan WebServiceInfo
 	client   *http.Client
 	quit     chan bool
 }
 
-func newWorker(id int, tasks chan Task, timeout time.Duration) *Worker {
+func newWorker(id int, tasks chan WebServiceInfo, timeout time.Duration) *Worker {
 	return &Worker{
 		id:       id,
 		taskChan: tasks,
@@ -35,14 +35,19 @@ func (w *Worker) StartBackground(wg *sync.WaitGroup, results chan Result) {
 	}
 }
 
-func (w *Worker) process(workerId int, task Task, wg *sync.WaitGroup) Result {
+// TODO: Compile link with port
+func (w *Worker) process(workerId int, task WebServiceInfo, wg *sync.WaitGroup) Result {
 	wg.Add(1)
 	defer wg.Done()
-	res := Result{URL: task.URL}
+	res := Result{
+		ID:        task.ID,
+		UserEmail: task.UserEmail,
+		URL:       task.Link,
+	}
 
 	now := time.Now()
 
-	resp, err := w.client.Get(task.URL)
+	resp, err := w.client.Get(task.Link)
 	if err != nil {
 		res.Error = err
 
