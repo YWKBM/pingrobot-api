@@ -1,0 +1,62 @@
+package pingrobot
+
+import (
+	"net/http"
+	"sync"
+	"time"
+)
+
+type Worker struct {
+	id       int
+	taskChan chan Task
+	client   *http.Client
+	quit     chan bool
+}
+
+func newWorker(id int, tasks chan Task, timeout time.Duration) *Worker {
+	return &Worker{
+		id:       id,
+		taskChan: tasks,
+		client: &http.Client{
+			Timeout: timeout,
+		},
+		quit: make(chan bool),
+	}
+}
+
+func (w *Worker) StartBackground(wg *sync.WaitGroup, results chan Result) {
+	for {
+		select {
+		case task := <-w.taskChan:
+			results <- w.process(w.id, task, wg)
+		case <-w.quit:
+			return
+		}
+	}
+}
+
+func (w *Worker) process(workerId int, task Task, wg *sync.WaitGroup) Result {
+	wg.Add(1)
+	defer wg.Done()
+	res := Result{URL: task.URL}
+
+	now := time.Now()
+
+	resp, err := w.client.Get(task.URL)
+	if err != nil {
+		res.Error = err
+
+		return res
+	}
+
+	res.StatusCode = resp.StatusCode
+	res.ResponseTime = time.Since(now)
+
+	return res
+}
+
+func (w *Worker) Stop() {
+	go func() {
+		w.quit <- true
+	}()
+}

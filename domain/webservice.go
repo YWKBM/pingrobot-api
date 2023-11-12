@@ -6,12 +6,13 @@ import (
 )
 
 type WebService struct {
-	ID     int    `json:"id"`
-	UserID int    `json:"user_id"`
-	Name   string `json:"name"`
-	Link   string `json:"link"`
-	Port   int    `json:"port"`
-	Status string `json:"status"`
+	ID        int    `json:"id"`
+	UserID    int    `json:"user_id"`
+	UserEmail string `json:"user_email"`
+	Name      string `json:"name"`
+	Link      string `json:"link"`
+	Port      int    `json:"port"`
+	Status    string `json:"status"`
 }
 
 type UpdateWebServiceInput struct {
