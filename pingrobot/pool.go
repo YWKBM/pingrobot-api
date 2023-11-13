@@ -83,6 +83,12 @@ func (p *Pool) processResults() {
 	go func() {
 		for result := range p.results {
 			fmt.Println(result)
+			if result.Error != nil {
+				//TODO: send email
+				p.db.Query("UPDATE web_services SET status = $1 WHERE ID = $2", "ERROR", result.ID)
+			}
+
+			p.db.Query("UPDATE web_services SET status = $1 WHERE ID = $2", "SUCCESS", result.ID)
 		}
 	}()
 }

@@ -1,6 +1,7 @@
 package pingrobot
 
 import (
+	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -39,10 +40,18 @@ func (w *Worker) StartBackground(wg *sync.WaitGroup, results chan Result) {
 func (w *Worker) process(workerId int, task WebServiceInfo, wg *sync.WaitGroup) Result {
 	wg.Add(1)
 	defer wg.Done()
+
+	var url string
+	if task.Port != 0 {
+		url += task.Link + ":" + fmt.Sprintf(task.Port)
+	} else {
+		url = task.Link
+	}
+
 	res := Result{
 		ID:        task.ID,
 		UserEmail: task.UserEmail,
-		URL:       task.Link,
+		URL:       url,
 	}
 
 	now := time.Now()
