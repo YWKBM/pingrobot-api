@@ -29,20 +29,20 @@ type Result struct {
 type Pool struct {
 	db           *sql.DB
 	workersCount int
-	tasks        chan WebServiceInfo
+	tasks        chan *WebServiceInfo
 	results      chan Result
 	workers      []*Worker
-	webServices  []WebServiceInfo
+	webServices  []*WebServiceInfo
 	wg           sync.WaitGroup
 }
 
-func NewPool(db *sql.DB, workersCount int, tasks chan WebServiceInfo, results chan Result) *Pool {
+func NewPool(db *sql.DB, workersCount int, tasks chan *WebServiceInfo, results chan Result) *Pool {
 	return &Pool{
 		db:           db,
 		workersCount: workersCount,
 		tasks:        tasks,
 		results:      results,
-		webServices:  make([]WebServiceInfo, 128),
+		webServices:  make([]*WebServiceInfo, 128),
 		wg:           sync.WaitGroup{},
 	}
 }
@@ -57,6 +57,7 @@ func (p *Pool) RunBackground() {
 
 func (p *Pool) getAllWebServiceInfo() {
 	rows, err := p.db.Query("SELECT * FROM web_services")
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -64,7 +65,7 @@ func (p *Pool) getAllWebServiceInfo() {
 		var webService WebServiceInfo
 
 		err := rows.Scan(&webService.ID, &webService.UserEmail, &webService.Name, &webService.Link, &webService.Port, &webService.Status)
-		p.webServices = append(p.webServices, webService)
+		p.webServices = append(p.webServices, &webService)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -72,10 +73,14 @@ func (p *Pool) getAllWebServiceInfo() {
 }
 
 func (p *Pool) generateTasks() {
-	time.Sleep(time.Minute)
-	p.getAllWebServiceInfo()
-	for _, webService := range p.webServices {
-		p.tasks <- webService
+	for {
+		p.getAllWebServiceInfo()
+		for _, webService := range p.webServices {
+			if webService != nil {
+				p.tasks <- webService
+			}
+		}
+		time.Sleep(time.Minute)
 	}
 }
 

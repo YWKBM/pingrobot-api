@@ -1,7 +1,6 @@
 package pingrobot
 
 import (
-	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -9,12 +8,12 @@ import (
 
 type Worker struct {
 	id       int
-	taskChan chan WebServiceInfo
+	taskChan chan *WebServiceInfo
 	client   *http.Client
 	quit     chan bool
 }
 
-func newWorker(id int, tasks chan WebServiceInfo, timeout time.Duration) *Worker {
+func newWorker(id int, tasks chan *WebServiceInfo, timeout time.Duration) *Worker {
 	return &Worker{
 		id:       id,
 		taskChan: tasks,
@@ -29,7 +28,7 @@ func (w *Worker) StartBackground(wg *sync.WaitGroup, results chan Result) {
 	for {
 		select {
 		case task := <-w.taskChan:
-			results <- w.process(w.id, task, wg)
+			results <- w.process(w.id, *task, wg)
 		case <-w.quit:
 			return
 		}
@@ -43,7 +42,7 @@ func (w *Worker) process(workerId int, task WebServiceInfo, wg *sync.WaitGroup) 
 
 	var url string
 	if task.Port != 0 {
-		url += task.Link + ":" + fmt.Sprintf(task.Port)
+		url += task.Link + ":" + string(task.Port)
 	} else {
 		url = task.Link
 	}

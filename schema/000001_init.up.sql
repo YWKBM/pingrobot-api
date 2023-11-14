@@ -14,9 +14,9 @@ CREATE TABLE web_services
 (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
-    user_email VARCHAR(255) REFERENCES user(email)
+    user_email VARCHAR(255) REFERENCES users(email),
     name VARCHAR(255) NOT NULL,
     link VARCHAR(255) NOT NULL,
     port INT NOT NULL,
-    status service_status DEFAULT ('NOT_STATED'),
+    status service_status DEFAULT ('NOT_STATED')
 );
