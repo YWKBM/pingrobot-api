@@ -22,7 +22,7 @@ type UpdateWebServiceInput struct {
 }
 
 func (w WebService) Validate() error {
-	if validURL(w.Link) {
+	if !validURL(w.Link) {
 		return errors.New("Invalid url")
 	}
 
@@ -30,7 +30,7 @@ func (w WebService) Validate() error {
 }
 
 func (w UpdateWebServiceInput) Validate() error {
-	if validURL(w.Link) {
+	if !validURL(w.Link) {
 		return errors.New("Invalid url")
 	}
 
@@ -39,6 +39,6 @@ func (w UpdateWebServiceInput) Validate() error {
 
 func validURL(link string) bool {
 	//TODO: rewrite for ping-app
-	_, err := url.ParseRequestURI(link)
+	_, err := url.Parse(link)
 	return err == nil
 }

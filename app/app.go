@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/spf13/viper"
-	"pingrobot-api.go/pingrobot"
 	pkg "pingrobot-api.go/pkg/database"
 	"pingrobot-api.go/repository"
 	"pingrobot-api.go/service"
@@ -40,7 +39,6 @@ func Run() {
 	services := service.NewServices(deps)
 
 	handler := transport.NewHadnler(services.WebServices, services.Authorization)
-	pingrobot.Run(db)
 	handler.Init()
 }
 

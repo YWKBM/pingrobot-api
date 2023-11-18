@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"pingrobot-api.go/domain"
@@ -17,19 +18,43 @@ func NewWebSericeRepo(db *sql.DB) *WebSericeRepo {
 
 func (w *WebSericeRepo) Create(userId int, webService domain.WebService) (int, error) {
 	var webServiceId int
-
-	createWebServiceQuery := fmt.Sprintf("INSERT INTO web_services (user_id, name, link, port) values ($1, $2, $3, $4) RETURNING id")
-	row, err := w.db.Query(createWebServiceQuery, userId, webService.Name, webService.Link, webService.Port)
+	tx, err := w.db.Begin()
 	if err != nil {
+		tx.Rollback()
+	}
+
+	var exists bool
+	row := tx.QueryRow("SELECT EXISTS(SELECT user_id, link, port FROM web_services WHERE user_id = $1 AND link = $2 AND port = $3)", userId, webService.Link, webService.Port)
+	if err := row.Scan(&exists); err != nil {
+		tx.Rollback()
 		return 0, err
 	}
 
-	row.Next()
-	{
-		row.Scan(&webServiceId)
+	if exists {
+		err = errors.New("Already exists")
+		return 0, err
 	}
 
-	return webServiceId, err
+	var userEmail string
+	row = tx.QueryRow("SELECT email FROM users WHERE id = $1", userId)
+	if err := row.Scan(&userEmail); err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	createWebServiceQuery := fmt.Sprintf("INSERT INTO web_services (user_id, user_email, name, link, port) values ($1, $2, $3, $4, $5) RETURNING id")
+	rows, err := tx.Query(createWebServiceQuery, userId, userEmail, webService.Name, webService.Link, webService.Port)
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	rows.Next()
+	{
+		rows.Scan(&webServiceId)
+	}
+
+	return webServiceId, tx.Commit()
 }
 
 func (w *WebSericeRepo) GetAll(userId int) ([]domain.WebService, error) {
@@ -42,7 +67,7 @@ func (w *WebSericeRepo) GetAll(userId int) ([]domain.WebService, error) {
 
 	for rows.Next() {
 		var webService domain.WebService
-		err := rows.Scan(&webService.ID, &webService.UserID, &webService.Name, &webService.Link, &webService.Port, &webService.Status)
+		err := rows.Scan(&webService.ID, &webService.UserID, &webService.UserEmail, &webService.Name, &webService.Link, &webService.Port, &webService.Status)
 		if err != nil {
 			return nil, err
 		}
@@ -55,8 +80,8 @@ func (w *WebSericeRepo) GetAll(userId int) ([]domain.WebService, error) {
 func (w *WebSericeRepo) GetById(userId int, webServiceId int) (domain.WebService, error) {
 	var webService domain.WebService
 
-	err := w.db.QueryRow("SELECT id, user_id, name, link, port, status FROM web_services WHERE user_id = $1 AND id = $2", userId, webServiceId).
-		Scan(&webService.ID, &webService.UserID, &webService.Name, &webService.Link, &webService.Port, &webService.Status)
+	err := w.db.QueryRow("SELECT id, user_id, user_email, name, link, port, status FROM web_services WHERE user_id = $1 AND id = $2", userId, webServiceId).
+		Scan(&webService.ID, &webService.UserID, &webService.UserEmail, &webService.Name, &webService.Link, &webService.Port, &webService.Status)
 
 	return webService, err
 }

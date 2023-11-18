@@ -22,7 +22,7 @@ func (wh *WebServiceHandler) createWebService(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		fmt.Println(err)
-		c.AbortWithStatusJSON(500, http.StatusInternalServerError)
+		newErrorResponse(c, 500, err.Error())
 	}
 
 	var input domain.WebService
@@ -35,7 +35,7 @@ func (wh *WebServiceHandler) createWebService(c *gin.Context) {
 	id, err := wh.webServiceService.Create(userId, input)
 	if err != nil {
 		fmt.Println(err)
-		c.AbortWithStatusJSON(400, http.StatusBadRequest)
+		newErrorResponse(c, 400, err.Error())
 		return
 	}
 
