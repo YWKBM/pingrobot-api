@@ -39,6 +39,6 @@ func (w UpdateWebServiceInput) Validate() error {
 
 func validURL(link string) bool {
 	//TODO: rewrite for ping-app
-	_, err := url.Parse(link)
-	return err == nil
+	u, err := url.Parse(link)
+	return err == nil && u.Scheme != "" && u.Host != ""
 }
