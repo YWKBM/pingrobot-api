@@ -67,7 +67,7 @@ func (w *WebSericeRepo) GetAll(userId int) ([]domain.WebService, error) {
 
 	for rows.Next() {
 		var webService domain.WebService
-		err := rows.Scan(&webService.ID, &webService.UserID, &webService.UserEmail, &webService.Name, &webService.Link, &webService.Port, &webService.Status)
+		err := rows.Scan(&webService.ID, &webService.UserID, &webService.UserEmail, &webService.Name, &webService.Link, &webService.Port, &webService.Status, &webService.Alarm)
 		if err != nil {
 			return nil, err
 		}
@@ -81,7 +81,7 @@ func (w *WebSericeRepo) GetById(userId int, webServiceId int) (domain.WebService
 	var webService domain.WebService
 
 	err := w.db.QueryRow("SELECT id, user_id, user_email, name, link, port, status FROM web_services WHERE user_id = $1 AND id = $2", userId, webServiceId).
-		Scan(&webService.ID, &webService.UserID, &webService.UserEmail, &webService.Name, &webService.Link, &webService.Port, &webService.Status)
+		Scan(&webService.ID, &webService.UserID, &webService.UserEmail, &webService.Name, &webService.Link, &webService.Port, &webService.Status, &webService.Alarm)
 
 	return webService, err
 }

@@ -9,6 +9,7 @@ CREATE TABLE users
 );
 
 CREATE TYPE service_status as enum('NOT_STATED', 'SUCCESS', 'ERROR');
+CREATE TYPE alarm_status as enum('ALARMED', 'NOT_ALARMED');
 
 CREATE TABLE web_services
 (
@@ -18,5 +19,6 @@ CREATE TABLE web_services
     name VARCHAR(255) NOT NULL,
     link VARCHAR(255) NOT NULL,
     port INT NOT NULL,
-    status service_status DEFAULT ('NOT_STATED')
+    status service_status DEFAULT ('NOT_STATED'),
+    alarm alarm_status DEFAULT ('NOT_ALARMED')
 );

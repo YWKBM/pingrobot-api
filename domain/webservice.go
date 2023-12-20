@@ -13,6 +13,7 @@ type WebService struct {
 	Link      string `json:"link"`
 	Port      int    `json:"port"`
 	Status    string `json:"status"`
+	Alarm     string `json:"alarm"`
 }
 
 type UpdateWebServiceInput struct {
